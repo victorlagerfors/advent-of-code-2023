@@ -29,7 +29,11 @@ const parseInput = () => {
       ];
       return mapSetColor(id, sets);
     });
+  sumOfPossibleSets(sets);
+  powerOfMinimumSets(sets);
+};
 
+const sumOfPossibleSets = (sets: SetOfCubes[]) => {
   const impossibleSets = sets.map((set) => {
     const exceedsLimit = set.blue > 14 || set.green > 13 || set.red > 12;
     if (exceedsLimit) {
@@ -43,6 +47,39 @@ const parseInput = () => {
   );
 
   console.log(possible.reduce((prev, curr) => prev + curr, 0));
+};
+
+const powerOfMinimumSets = (sets: SetOfCubes[]) => {
+  const minimums: SetOfCubes[] = [...Array(100).keys()].map((set) => ({
+    id: set + 1,
+    green: 0,
+    red: 0,
+    blue: 0,
+  }));
+  sets.forEach((curr) => {
+    const setMin = minimums[curr.id - 1];
+    // if (curr.id === 2) debugger;
+    const blueMin = minimums[curr.id - 1].blue;
+    const redMin = minimums[curr.id - 1].red;
+    const greenMin = minimums[curr.id - 1].green;
+
+    if (setMin.blue <= (curr.blue || 0)) {
+      setMin.blue = curr.blue || 0;
+    }
+    if (setMin.green <= (curr.green || 0)) {
+      setMin.green = curr.green || 0;
+    }
+    if (setMin.red <= (curr.red || 0)) {
+      setMin.red = curr.red || 0;
+    }
+  });
+  console.log(
+    minimums.reduce(
+      (prev, curr) =>
+        (prev += (curr.blue || 0) * (curr.red || 0) * (curr.green || 0)),
+      0
+    )
+  );
 };
 
 const mapSetColor = (id: number, sets: (string | undefined)[]): SetOfCubes => {
